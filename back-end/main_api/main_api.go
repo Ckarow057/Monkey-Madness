@@ -25,10 +25,19 @@ func main() {
 	defer monkeyDatabase.Close()
 
 	router.HandleFunc("/", hello).Methods(http.MethodPost)
+	// router.HandleFunc("/dailymonkey", hello).Methods(http.MethodPost)
+	// router.HandleFunc("/displayallmonkeys", hello).Methods(http.MethodPost)
+	// router.HandleFunc("/displaymonkey", hello).Methods(http.MethodPost)
+	// router.HandleFunc("/displaypersonalinfo", hello).Methods(http.MethodPost)
+	// router.HandleFunc("/insertuserinfo", hello).Methods(http.MethodPost)
+
 
 	http.ListenAndServe(":8000", router)
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
+
 	w.Write([]byte("Monkey Madness Time!"))
+
 }
+
