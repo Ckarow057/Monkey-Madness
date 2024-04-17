@@ -5,7 +5,9 @@ import (
 	"net/http"
 
 	"database/sql"
-	// "encoding/json"
+	"monkey_madness/monkey_database"
+
+	"encoding/json"
 
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
@@ -17,7 +19,7 @@ func main() {
 	router := mux.NewRouter()
 
 	var err error
-	monkeyDatabase, err = sql.Open("sqlite3", "../database/monkey.db")
+	monkeyDatabase, err = sql.Open("sqlite3", "../database/monkeys.db")
 
 	if err != nil {
 		log.Fatal(err)
@@ -26,7 +28,7 @@ func main() {
 
 	router.HandleFunc("/", hello).Methods(http.MethodPost)
 	// router.HandleFunc("/dailymonkey", hello).Methods(http.MethodPost)
-	// router.HandleFunc("/displayallmonkeys", hello).Methods(http.MethodPost)
+	router.HandleFunc("/displayallmonkeys", getMonkeysHandler).Methods(http.MethodPost)
 	// router.HandleFunc("/displaymonkey", hello).Methods(http.MethodPost)
 	// router.HandleFunc("/displaypersonalinfo", hello).Methods(http.MethodPost)
 	// router.HandleFunc("/insertuserinfo", hello).Methods(http.MethodPost)
@@ -41,3 +43,19 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func getMonkeysHandler(w http.ResponseWriter, r *http.Request){
+	monkeys := monkey_database.GetAllMonkeys(monkeyDatabase)
+
+	monkeyJSON, err := json.Marshal(monkeys)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	enableCORS(&w)
+	w.Write(monkeyJSON)
+}
+
+func enableCORS(w *http.ResponseWriter){
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}

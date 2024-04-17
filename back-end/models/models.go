@@ -1,10 +1,10 @@
-package models
+package monkey_models
 
 type Monkey struct {
 	MonkeyID int
 	MonkeyName string
 	MonkeyBreed string
-	MonekyImg string
+	MonkeyImg string
 	MonkeyFact string
 }
 
