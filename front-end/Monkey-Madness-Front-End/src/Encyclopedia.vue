@@ -2,19 +2,27 @@
 import { ref } from 'vue'
 import MonkeyCard from './components/MonkeyCard.vue'
 
-let id = 0;
-const monkeys = ref([
-    { id: id++, monkeyName: 'Monkey1', monkeyImage: 'placeholder.png' }
-])
-// do fetch from monkey api here
+const id = 0
+const monkeys = ref("")
+
+fetch('http://localhost:8000/displayallmonkeys', {
+    method: 'POST'
+})
+    .then(response => response.json())
+    .then(data => {
+        monkeys.value = data
+        console.log(monkeys.value)
+    })
+
 
 </script>
 
 <template>
     <h1>Le monk</h1>
-    <v-row no-gutters>
+    <p>{{ monkeys }}</p>
+    <!-- <v-row no-gutters>
         <v-col cols="6" v-for="monkey in monkeys" :key="monkey.id">
-            <MonkeyCard :titleText="monkey.monkeyName" :iamgeName="monkey.monkeyImage"></MonkeyCard>
+            <MonkeyCard :titleText="monkey.monkeyName" :imageName="monkey.monkeyImage"></MonkeyCard>
         </v-col>
-    </v-row>
+    </v-row> -->
 </template>
