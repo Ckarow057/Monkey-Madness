@@ -6,6 +6,7 @@ import (
 
 	"database/sql"
 	"monkey_madness/monkey_database"
+	"monkey_madness/monkey_models"
 
 	"encoding/json"
 
@@ -29,7 +30,7 @@ func main() {
 	router.HandleFunc("/", hello).Methods(http.MethodPost)
 	// router.HandleFunc("/dailymonkey", hello).Methods(http.MethodPost)
 	router.HandleFunc("/displayallmonkeys", getMonkeysHandler).Methods(http.MethodPost)
-	// router.HandleFunc("/displaymonkey", hello).Methods(http.MethodPost)
+	router.HandleFunc("/displaymonkey", getMonkeyHandler).Methods(http.MethodPost)
 	// router.HandleFunc("/displaypersonalinfo", hello).Methods(http.MethodPost)
 	// router.HandleFunc("/insertuserinfo", hello).Methods(http.MethodPost)
 
@@ -55,6 +56,43 @@ func getMonkeysHandler(w http.ResponseWriter, r *http.Request){
 	enableCORS(&w)
 	w.Write(monkeyJSON)
 }
+
+func getMonkeyHandler(w http.ResponseWriter, r *http.Request){
+	var monkey monkey_models.Monkey
+
+	err:= json.NewDecoder(r.Body).Decode(&monkey)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	newMonkey := monkey_database.GetMonkeyByName(monkeyDatabase, monkey)
+
+	newMonkeyJSON, err := json.Marshal(newMonkey)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(newMonkeyJSON)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 func enableCORS(w *http.ResponseWriter){
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")

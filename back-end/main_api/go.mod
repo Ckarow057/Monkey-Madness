@@ -6,7 +6,7 @@ require (
 	monkey_madness/monkey_database v0.0.0-00010101000000-000000000000
 )
 
-require monkey_madness/monkey_models v0.0.0-00010101000000-000000000000 // indirect
+require monkey_madness/monkey_models v0.0.0-00010101000000-000000000000
 
 go 1.22.2
 
