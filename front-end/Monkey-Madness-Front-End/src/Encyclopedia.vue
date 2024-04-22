@@ -33,5 +33,5 @@ fetch('http://localhost:8000/displayallmonkeys', {
                 :MonkeyFact="monkey.MonkeyFact">
             </MonkeyCard>
         </v-col>
-    </v-row> -->
+    </v-row>
 </template>
