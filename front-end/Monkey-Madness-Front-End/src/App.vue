@@ -26,7 +26,7 @@ const currentView = computed(() => {
   <v-app>
     <v-navigation-drawer color="#5C4033" v-model="drawer">
       <v-list-item prependIcon="mdi-home" href="#/" title="Home" @click="drawer = !drawer"></v-list-item>
-      <v-list-item prependIcon="mdi-monkey" href="#/encyclopedia" title="Monkey Encyclopedia"
+      <v-list-item prependIcon="mdi-book-open-page-variant-outline" href="#/encyclopedia" title="Monkey Encyclopedia"
         @click="drawer = !drawer"></v-list-item>
       <v-list-item prependIcon="mdi-cash-multiple" href="#/donate" title="Donate"
         @click="drawer = !drawer"></v-list-item>
