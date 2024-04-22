@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"monkey_madness/monkey_models"
 	"log"
+	"math/rand"
 )
 
 func GetAllMonkeys(db *sql.DB) []monkey_models.Monkey{
@@ -54,26 +55,27 @@ func GetMonkeyByName(db *sql.DB, monkey monkey_models.Monkey) monkey_models.Monk
 	return newMonkey
 }
 
-func GetRandomMonkey(db *sql.DB) monkey_models.Monkey{
-	numberOfIds []
-
-	row, err := db.Query("SELECT * FROM monkeys")
+func countMonkeyIDs(db *sql.DB) (int, error) {
+	var count int
+	err:= db.QueryRow("SELECT COUNT(*) FROM monkeys").Scan(&count)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer row.Close()
+	return count, err
+}
 
-	for row.Next() {
-		var monkeyId int
-		row.Scan(&monkeyId)
-			MonkeyID: monkeyId,
-		
-		numberOfIds = append(numberOfIds, monkeyId)
+func GetRandomMonkey(db *sql.DB) monkey_models.Monkey{
+	numberOfIds, err := countMonkeyIDs(db)
+	
+	if err != nil {
+		log.Fatal(err)
 	}
 	
-	sqlStatement := `SELECT * FROM monkeys WHERE monkeyName = ?`
-	row := db.QueryRow(sqlStatement, monkey.MonkeyName)
+	randomIndex:= rand.Intn(numberOfIds) + 1
+
+	sqlStatement := `SELECT * FROM monkeys WHERE monkeyID = ?`
+	row := db.QueryRow(sqlStatement, randomIndex)
 	var monkeyId int
 	var monkeyName string
 	var monkeyBreed string

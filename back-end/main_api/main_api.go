@@ -29,8 +29,11 @@ func main() {
 
 	router.HandleFunc("/", hello).Methods(http.MethodPost)
 	// router.HandleFunc("/dailymonkey", hello).Methods(http.MethodPost)
-	router.HandleFunc("/displayallmonkeys", getMonkeysHandler).Methods(http.MethodPost)
-	router.HandleFunc("/displaymonkey", getMonkeyHandler).Methods(http.MethodPost)
+	router.HandleFunc("/displayallmonkeys", getMonkeysHandler).Methods(http.MethodPost) // Displays every monkey in db
+	router.HandleFunc("/displaymonkey", getMonkeyHandler).Methods(http.MethodPost) // displays random monkey
+	router.HandleFunc("/displaymonkeybyname", getMonkeyByNameHandler).Methods(http.MethodPost) // displays specifiic monkey by name
+
+	
 	// router.HandleFunc("/displaypersonalinfo", hello).Methods(http.MethodPost)
 	// router.HandleFunc("/insertuserinfo", hello).Methods(http.MethodPost)
 
@@ -65,7 +68,7 @@ func getMonkeyHandler(w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	newMonkey := monkey_database.GetMonkeyByName(monkeyDatabase, monkey)
+	newMonkey := monkey_database.GetRandomMonkey(monkeyDatabase)
 
 	newMonkeyJSON, err := json.Marshal(newMonkey)
 	if err != nil {
@@ -77,22 +80,25 @@ func getMonkeyHandler(w http.ResponseWriter, r *http.Request){
 	w.Write(newMonkeyJSON)
 }
 
+func getMonkeyByNameHandler(w http.ResponseWriter, r *http.Request){
+	var monkey monkey_models.Monkey
 
+	err:= json.NewDecoder(r.Body).Decode(&monkey)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
+	newMonkey := monkey_database.GetMonkeyByName(monkeyDatabase, monkey)
 
+	newMonkeyJSON, err := json.Marshal(newMonkey)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-
-
-
-
-
-
-
-
-
-
-
-
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(newMonkeyJSON)
+}
 
 func enableCORS(w *http.ResponseWriter){
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
