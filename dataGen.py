@@ -12,6 +12,11 @@ c.execute('''CREATE TABLE monkeys
              monkeyImg TEXT, 
              monkeyFact TEXT)''')
 
+c.execute('''CREATE TABLE userinformation
+             (userID INTEGER PRIMARY KEY, 
+             userSSN INTEGER, 
+             userCardNumber INTEGER)''')
+
 # Sample data to populate the table
 monkeys_data = [
     (1, 'Chimpanzee', 'Pan troglodytes','TempIMG.png', 'Chimpanzees share about 98% of their DNA with humans.'),
@@ -22,8 +27,18 @@ monkeys_data = [
     # Add more data as needed
 ]
 
+users_info = [
+    (1, 391647654, 377456767226730),
+    (2, 390372674, 377456036706215),
+    (3, 390372234, 377456036723415),
+    (4, 390324523, 322356036723415),
+    (5, 390321233, 322356036486415)
+]
+
 # Insert the data into the table
 c.executemany('INSERT INTO monkeys VALUES (?, ?, ?, ?, ?)', monkeys_data)
+c.executemany('INSERT INTO userinformation VALUES (?, ?, ?)', users_info)
+
 
 # Commit changes and close the connection
 conn.commit()
