@@ -91,3 +91,52 @@ func GetRandomMonkey(db *sql.DB) monkey_models.Monkey{
 	}
 	return newMonkey
 }
+
+func GetAllUserInfo(db *sql.DB) []monkey_models.PersonalInfo{
+	var userInfo[] monkey_models.PersonalInfo
+
+	row, err := db.Query("SELECT * FROM userinformation")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer row.Close()
+
+	for row.Next() {
+		var userId int
+		var userSsn int
+		var userCardNumber int
+		
+		row.Scan(&userId, &userSsn, &userCardNumber)
+		userData := monkey_models.PersonalInfo {
+			UserID: userId,
+			UserSSN: userSsn,
+			UserCardNum: userCardNumber,
+			
+		}
+		userInfo = append(userInfo, userData)
+	}
+	return userInfo
+}
+
+func InsertUserInfo(db *sql.DB, userdata monkey_models.PersonalInfo) monkey_models.PersonalInfo{
+	insertDataSql := "INSERT INTO userinformation (UserID, UserSSN, UserCardNumber) VALUES(?, ?, ?)"
+	statement, err := db.Prepare(insertDataSql)
+
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	result, err := statement.Exec(userdata.UserID, userdata.UserSSN, userdata.UserCardNum)
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	lid, err := result.LastInsertId()
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	userdata.UserID = int(lid)
+	return userdata
+}
