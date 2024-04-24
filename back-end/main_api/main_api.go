@@ -34,8 +34,8 @@ func main() {
 	router.HandleFunc("/displaymonkeybyname", getMonkeyByNameHandler).Methods(http.MethodPost) // displays specifiic monkey by name
 
 	
-	// router.HandleFunc("/displaypersonalinfo", hello).Methods(http.MethodPost)
-	// router.HandleFunc("/insertuserinfo", hello).Methods(http.MethodPost)
+	router.HandleFunc("/displaypersonalinfo", getAllUserInfoHandler).Methods(http.MethodPost)
+	router.HandleFunc("/insertuserinfo", addUserInfoHandler).Methods(http.MethodPost)
 
 
 	http.ListenAndServe(":8000", router)
@@ -100,6 +100,45 @@ func getMonkeyByNameHandler(w http.ResponseWriter, r *http.Request){
 	w.Write(newMonkeyJSON)
 }
 
+
+func getAllUserInfoHandler(w http.ResponseWriter, r *http.Request){
+	userData := monkey_database.GetAllUserInfo(monkeyDatabase)
+
+	userJSON, err := json.Marshal(userData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	enableCORS(&w)
+	w.Write(userJSON)
+}
+
+func addUserInfoHandler(w http.ResponseWriter, r *http.Request){
+	var userdata monkey_models.PersonalInfo
+
+	err:= json.NewDecoder(r.Body).Decode(&userdata)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Put error handling here to check for missing params (Bad JSON)
+
+	newUserData := monkey_database.InsertUserInfo(monkeyDatabase, userdata)
+
+	newDataJSON, err := json.Marshal(newUserData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	enableCORS(&w)
+	w.Write(newDataJSON)
+}
 func enableCORS(w *http.ResponseWriter){
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
+
