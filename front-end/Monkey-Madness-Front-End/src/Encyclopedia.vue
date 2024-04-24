@@ -11,7 +11,6 @@ fetch('http://localhost:8000/displayallmonkeys', {
     .then(response => response.json())
     .then(data => {
         monkeys.value = data
-        console.log(monkeys.value)
     })
 </script>
 
