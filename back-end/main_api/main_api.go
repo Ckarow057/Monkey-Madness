@@ -27,24 +27,14 @@ func main() {
 	}
 	defer monkeyDatabase.Close()
 
-	router.HandleFunc("/", hello).Methods(http.MethodPost)
-	// router.HandleFunc("/dailymonkey", hello).Methods(http.MethodPost)
 	router.HandleFunc("/displayallmonkeys", getMonkeysHandler).Methods(http.MethodPost) // Displays every monkey in db
 	router.HandleFunc("/displaymonkey", getMonkeyHandler).Methods(http.MethodPost) // displays random monkey
 	router.HandleFunc("/displaymonkeybyname", getMonkeyByNameHandler).Methods(http.MethodPost) // displays specifiic monkey by name
 
-	
 	router.HandleFunc("/displaypersonalinfo", getAllUserInfoHandler).Methods(http.MethodPost)
 	router.HandleFunc("/insertuserinfo", addUserInfoHandler).Methods(http.MethodPost)
 
-
 	http.ListenAndServe(":8000", router)
-}
-
-func hello(w http.ResponseWriter, r *http.Request) {
-
-	w.Write([]byte("Monkey Madness Time!"))
-
 }
 
 func getMonkeysHandler(w http.ResponseWriter, r *http.Request){
@@ -77,6 +67,7 @@ func getMonkeyHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	enableCORS(&w)
 	w.Write(newMonkeyJSON)
 }
 
@@ -97,6 +88,7 @@ func getMonkeyByNameHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	enableCORS(&w)
 	w.Write(newMonkeyJSON)
 }
 
