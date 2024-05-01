@@ -51,24 +51,16 @@ func getMonkeysHandler(w http.ResponseWriter, r *http.Request){
 }
 
 func getMonkeyHandler(w http.ResponseWriter, r *http.Request){
-	var monkey monkey_models.Monkey
+	monkeys := monkey_database.GetRandomMonkey(monkeyDatabase)
 
-	err:= json.NewDecoder(r.Body).Decode(&monkey)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	newMonkey := monkey_database.GetRandomMonkey(monkeyDatabase)
-
-	newMonkeyJSON, err := json.Marshal(newMonkey)
+	monkeyJSON, err := json.Marshal(monkeys)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	enableCORS(&w)
-	w.Write(newMonkeyJSON)
+	w.Write(monkeyJSON)
 }
 
 func getMonkeyByNameHandler(w http.ResponseWriter, r *http.Request){

@@ -65,8 +65,9 @@ func countMonkeyIDs(db *sql.DB) (int, error) {
 	return count, err
 }
 
-func GetRandomMonkey(db *sql.DB) monkey_models.Monkey{
+func GetRandomMonkey(db *sql.DB) []monkey_models.Monkey{
 	numberOfIds, err := countMonkeyIDs(db)
+	var monkeyArray[] monkey_models.Monkey
 	
 	if err != nil {
 		log.Fatal(err)
@@ -89,7 +90,8 @@ func GetRandomMonkey(db *sql.DB) monkey_models.Monkey{
 		MonkeyImg: monkeyImg,
 		MonkeyFact: monkeyFact,
 	}
-	return newMonkey
+	monkeyArray = append(monkeyArray, newMonkey)
+	return monkeyArray
 }
 
 func GetAllUserInfo(db *sql.DB) []monkey_models.PersonalInfo{
