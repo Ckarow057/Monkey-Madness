@@ -11,14 +11,13 @@ fetch('http://localhost:8000/displayallmonkeys', {
     .then(response => response.json())
     .then(data => {
         monkeys.value = data
-        console.log(monkeys.value)
     })
 </script>
 
 <template>
     <h1>Our Monkeys</h1>
     <v-row no-gutters>
-        <v-col cols="4" v-for="monkey in monkeys" :key="monkey.MokneyID">
+        <v-col cols="4" v-for="monkey in monkeys" :key="monkey.MonkeyID">
             <MonkeyCard :MonkeyName="monkey.MonkeyName" :MonkeyBreed="monkey.MonkeyBreed" :MonkeyImg="monkey.MonkeyImg"
                 :MonkeyFact="monkey.MonkeyFact">
             </MonkeyCard>
