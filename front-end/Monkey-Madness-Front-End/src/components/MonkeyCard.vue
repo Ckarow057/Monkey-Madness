@@ -12,8 +12,8 @@ defineProps({
 <template>
     <div>
         <v-hover v-slot="{ isHovering, props }">
-            <v-card class="mx-auto" max-width="344" v-bind="props">
-                <img :src="`../images/${MonkeyImg}`">
+            <v-card class="mx-auto" max-width="50%" v-bind="props">
+                <v-img :src="`../images/${MonkeyImg}`" contain height="500px" width="100%"></v-img>
 
                 <v-card-text>
                     <h2 class="text-h6 text-primary">
