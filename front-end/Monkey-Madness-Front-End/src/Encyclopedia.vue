@@ -16,7 +16,8 @@ fetch('http://localhost:8000/displayallmonkeys', {
 </script>
 
 <template>
-    <h1>Our Monkeys</h1>
+    <div class="bg-green-lighten-5 text-brown-lighten-1 d-flex justify-center text-h2 pa-8">Our Monkeys
+    </div>
     <v-row>
         <v-col cols="6" v-for="monkey in monkeys" :key="monkey.MonkeyID">
             <MonkeyCard :MonkeyName="monkey.MonkeyName" :MonkeyBreed="monkey.MonkeyBreed" :MonkeyImg="monkey.MonkeyImg"
