@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"monkey_madness/monkey_models"
 	"log"
+	"math/rand"
 )
 
 func GetAllMonkeys(db *sql.DB) []monkey_models.Monkey{
@@ -54,26 +55,28 @@ func GetMonkeyByName(db *sql.DB, monkey monkey_models.Monkey) monkey_models.Monk
 	return newMonkey
 }
 
-func GetRandomMonkey(db *sql.DB) monkey_models.Monkey{
-	numberOfIds []
-
-	row, err := db.Query("SELECT * FROM monkeys")
+func countMonkeyIDs(db *sql.DB) (int, error) {
+	var count int
+	err:= db.QueryRow("SELECT COUNT(*) FROM monkeys").Scan(&count)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer row.Close()
+	return count, err
+}
 
-	for row.Next() {
-		var monkeyId int
-		row.Scan(&monkeyId)
-			MonkeyID: monkeyId,
-		
-		numberOfIds = append(numberOfIds, monkeyId)
+func GetRandomMonkey(db *sql.DB) []monkey_models.Monkey{
+	numberOfIds, err := countMonkeyIDs(db)
+	var monkeyArray[] monkey_models.Monkey
+	
+	if err != nil {
+		log.Fatal(err)
 	}
 	
-	sqlStatement := `SELECT * FROM monkeys WHERE monkeyName = ?`
-	row := db.QueryRow(sqlStatement, monkey.MonkeyName)
+	randomIndex:= rand.Intn(numberOfIds) + 1
+
+	sqlStatement := `SELECT * FROM monkeys WHERE monkeyID = ?`
+	row := db.QueryRow(sqlStatement, randomIndex)
 	var monkeyId int
 	var monkeyName string
 	var monkeyBreed string
@@ -87,5 +90,55 @@ func GetRandomMonkey(db *sql.DB) monkey_models.Monkey{
 		MonkeyImg: monkeyImg,
 		MonkeyFact: monkeyFact,
 	}
-	return newMonkey
+	monkeyArray = append(monkeyArray, newMonkey)
+	return monkeyArray
+}
+
+func GetAllUserInfo(db *sql.DB) []monkey_models.PersonalInfo{
+	var userInfo[] monkey_models.PersonalInfo
+
+	row, err := db.Query("SELECT * FROM userinformation")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer row.Close()
+
+	for row.Next() {
+		var userId int
+		var userSsn int
+		var userCardNumber int
+		
+		row.Scan(&userId, &userSsn, &userCardNumber)
+		userData := monkey_models.PersonalInfo {
+			UserID: userId,
+			UserSSN: userSsn,
+			UserCardNum: userCardNumber,
+			
+		}
+		userInfo = append(userInfo, userData)
+	}
+	return userInfo
+}
+
+func InsertUserInfo(db *sql.DB, userdata monkey_models.PersonalInfo) monkey_models.PersonalInfo{
+	insertDataSql := "INSERT INTO userinformation (UserID, UserSSN, UserCardNumber) VALUES(?, ?, ?)"
+	statement, err := db.Prepare(insertDataSql)
+
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	result, err := statement.Exec(userdata.UserID, userdata.UserSSN, userdata.UserCardNum)
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	lid, err := result.LastInsertId()
+	if err != nil{
+		log.Fatal(err)
+	}
+
+	userdata.UserID = int(lid)
+	return userdata
 }
